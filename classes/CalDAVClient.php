@@ -227,11 +227,18 @@ class CalDAVClient {
 		return $result;
 	}
 
-
-	//@todo
-	public function doReport()
+	/**
+	 * Performs REPORT request.
+	 * @param string $relativeUrl
+	 * @param $reqBody
+	 * @return HttpMessage
+	 */
+	public function doReport($relativeUrl = '', $reqBody)
 	{
+		$url = $this->buildUrl($relativeUrl);
 
+		$result = $this->doRequest('report', $url, null, $reqBody, "application/xml; charset=utf-8");
+		return $result;
 	}
 
 	/**
@@ -280,6 +287,11 @@ class CalDAVClient {
 
 		switch($method)
 		{
+			case 'report':
+				$r = new httpRequest($url, HttpRequest::METH_REPORT, $defaults);
+				$r->setContentType($contentType);
+				$r->setBody($content);
+				break;
 			case 'delete':
 				$r = new httpRequest($url, HttpRequest::METH_DELETE, $defaults);
 				break;

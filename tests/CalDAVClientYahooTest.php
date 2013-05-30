@@ -8,13 +8,15 @@ class CalDAVClientYahooTest extends PHPUnit_Framework_TestCase {
 	protected $client;
 
 	//CHANGE THIS !!
-	private $username = 'USERID@yahoo.com';
+	private $user = 'username';
 	private $password = 'password';
-	private $calendarUrl = 'https://caldav.calendar.yahoo.com/dav/userid%40yahoo.com/Calendar/USERID';
-	private $relativeUrl = '/dav/USERID%40yahoo.com/Calendar/USERID';
+	private $username, $calendarUrl, $relativeUrl;
 
 	protected function setUp()
 	{
+		$this->username = "$this->user@yahoo.com";
+		$this->calendarUrl = "https://caldav.calendar.yahoo.com/dav/$this->user%40yahoo.com/Calendar/$this->user";
+		$this->relativeUrl = "/dav/$this->user%40yahoo.com/Calendar/$this->user";
 		$this->client = new CalDAVClient($this->calendarUrl, $this->username, $this->password);
 	}
 
@@ -41,6 +43,16 @@ class CalDAVClientYahooTest extends PHPUnit_Framework_TestCase {
 
 		$body_has_multistatus = strlen($result->getBody());
 		$this->assertGreaterThan(1, $body_has_multistatus);
+	}
+
+	/**
+	 * Tests REPORT method.
+	 */
+	public function testReportAbsolute()
+	{
+		$body = '<c:calendar-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav"><d:prop><d:getetag /><c:calendar-data /></d:prop><c:filter><c:comp-filter name="VCALENDAR" /></c:filter></c:calendar-query>';
+		$result = $this->client->doReport(null, $body);
+		$this->assertEquals('207', $result->getResponseCode());
 	}
 
 	/**
